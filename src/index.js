@@ -89,7 +89,7 @@ class Game extends React.Component {
     const moves = history.map((step, move) => {
       const desc = move ? 
       'Go to move # ' + move :
-      'Go to game start ';
+      'Click to start a new game ';
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
@@ -105,7 +105,7 @@ class Game extends React.Component {
     }
 
     return (
-      <div className="game">
+      <div className="game-container">
         <div className="game-board">
           <Board
             squares={current.squares}
