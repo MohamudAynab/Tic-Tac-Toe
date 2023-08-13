@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-
+///represents individual square on game board.
+///Accepts a 'value' prop to display either 'X' or 'O'.
+///Invokes the `on click` prop when the square is clicked.
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
@@ -11,6 +13,8 @@ function Square(props) {
   );
 }
 
+///Renders the game board with multiple `Square` components arranged in rows.
+///Maps the `squares` and   `onClick` props from the `Game` component to each `Square`
 class Board extends React.Component {
   renderSquare(i) {
     return (
@@ -44,6 +48,11 @@ class Board extends React.Component {
   }
 }
 
+///Manages the game state including history, current step number, and the next player('X' or 'O').
+///Handles the `handleClick` function when a square is clicked. 
+    ///-Checks for a winner or if the square is already filled.
+    ///-Updates the state with new move and toggles the current player.
+///Implements time-travel functionality to revisit previous game states. 
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -123,8 +132,17 @@ class Game extends React.Component {
 
 // ========================================
 
+
+///Root Rendering
+//Uses the `ReactDOM.createRoot` method to create a root for rendering the `Game` component.
+///Renders the `Game` component inside the root element with the id "root".
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<Game />);
+
+
+///Takes an array of `squares` as an argument.
+///Defines winning combination for Tic-Tac-Toe.
+///Checks if any of the defined combinations have the same value ('X' or 'O'), indicating a winner.
 
 function calculateWinner(squares) {
   const lines = [
