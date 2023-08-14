@@ -1,10 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
 
-///represents individual square on game board.
-///Accepts a 'value' prop to display either 'X' or 'O'.
-///Invokes the `on click` prop when the square is clicked.
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
@@ -13,136 +10,92 @@ function Square(props) {
   );
 }
 
-///Renders the game board with multiple `Square` components arranged in rows.
-///Maps the `squares` and   `onClick` props from the `Game` component to each `Square`
-class Board extends React.Component {
-  renderSquare(i) {
-    return (
-      <Square
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
-      />
-    );
-  }
+function Board({ squares, onClick }) {
+  const renderSquare = (i) => {
+    return <Square value={squares[i]} onClick={() => onClick(i)} />;
+  };
 
-  render() {
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
+  const rows = Array(3).fill(null).map((_, rowIndex) => {
+    const cols = Array(3).fill(null).map((_, colIndex) => {
+      const squareIndex = rowIndex * 3 + colIndex;
+      return renderSquare(squareIndex);
+    });
+    return <div className="board-row" key={rowIndex}>{cols}</div>;
+  });
+
+  return <div>{rows}</div>;
 }
 
-///Manages the game state including history, current step number, and the next player('X' or 'O').
-///Handles the `handleClick` function when a square is clicked. 
-    ///-Checks for a winner or if the square is already filled.
-    ///-Updates the state with new move and toggles the current player.
-///Implements time-travel functionality to revisit previous game states. 
-class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [{
-        squares: Array(9).fill(null)
-      }],
-      stepNumber: 0,
-      xIsNext: true
-    };
-  }
+function Game() {
+  const [history, setHistory] = useState([
+    {
+      squares: Array(9).fill(null),
+    },
+  ]);
+  const [stepNumber, setStepNumber] = useState(0);
+  const [xIsNext, setXIsNext] = useState(true);
 
-  handleClick(i) {
-    const history = this.state.history.slice(0, this.state.stepNumber +1);
-    const current = history[history.length - 1];
+  const handleStartNewGame = () => {
+    setHistory([
+      {
+        squares: Array(9).fill(null),
+      },
+    ]);
+    setStepNumber(0);
+    setXIsNext(true);
+  };
+
+  const handleSquareClick = (i) => {
+    const newHistory = history.slice(0, stepNumber + 1);
+    const current = newHistory[newHistory.length - 1];
     const squares = current.squares.slice();
+
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      history: history.concat([{
-        squares: squares
-      }]),
-      stepNumber: history.length,
-      xIsNext: !this.state.xIsNext,
-    });
-  }
 
-  jumpTo(step) {
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0,
-    })
-  }
-  
-  render() {
-    const history = this.state.history;
-    const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    squares[i] = xIsNext ? "X" : "O";
+    setHistory([...newHistory, { squares }]);
+    setStepNumber(newHistory.length);
+    setXIsNext(!xIsNext);
+  };
 
+  const jumpTo = (step) => {
+    setStepNumber(step);
+    setXIsNext(step % 2 === 0);
+  };
 
-    const moves = history.map((step, move) => {
-      const desc = move ? 
-      'Go to move # ' + move :
-      'Click to start a new game ';
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
-      );
-    });
+  const current = history[stepNumber];
+  const winner = calculateWinner(current.squares);
 
-    let status;
-    if (winner) {
-      status = 'Winner: ' + winner;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
+  const moves = history.map((_step, move) => (
+    <li key={move}>
+      <button onClick={() => jumpTo(move)}>
+        {move ? `Go to move # ${move}` : "Start"}
+      </button>
+    </li>
+  ));
 
-    return (
-      <div className="game-container">
-        <div className="game-board">
-          <Board
-            squares={current.squares}
-            onClick={(i) => this.handleClick(i)}
-          />
-        </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
-        </div>
+  let status = winner ? "Winner: " + winner : "Next player: " + (xIsNext ? "X" : "O");
+
+  return (
+    <div className="game-container">
+      <div className="game-board">
+        <Board squares={current.squares} onClick={handleSquareClick} />
       </div>
-    );
-  }
+      <div className="game-info">
+        <div>
+          <button onClick={handleStartNewGame}>Start A New Game</button>
+        </div>
+        <div>{status}</div>
+        <ol>{moves}</ol>
+      </div>
+    </div>
+  );
 }
 
-// ========================================
-
-
-///Root Rendering
-//Uses the `ReactDOM.createRoot` method to create a root for rendering the `Game` component.
-///Renders the `Game` component inside the root element with the id "root".
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<Game />);
-
-
-///Takes an array of `squares` as an argument.
-///Defines winning combination for Tic-Tac-Toe.
-///Checks if any of the defined combinations have the same value ('X' or 'O'), indicating a winner.
 
 function calculateWinner(squares) {
   const lines = [
@@ -163,4 +116,3 @@ function calculateWinner(squares) {
   }
   return null;
 }
-
