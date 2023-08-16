@@ -36,7 +36,9 @@ To run the Tic-Tac-Toe game locally on your machine, follow these steps:
    npm start
       ```
 
-5. ### **Open your web browser:** <br> Visit "http://localhost:3000" in your browser to play a game of Tic-Tac-Toe.
+5. ### **Open your web browser:**    Visit "http://localhost:3000" in your browser to play a game of Tic-Tac-Toe.    
+
+   
    
 
 
@@ -45,7 +47,7 @@ To run the Tic-Tac-Toe game locally on your machine, follow these steps:
 
 1. Players take turns seleting and an empty square to make their move.
 2. The first player is designated as player 'X', and the second player is 'O'.
-3. The game displays the current players turn and announces the winner when a winning combination is achieved. All moves are saved and displayed on the screen for reference.
+3. The game displays the current players turn and announces the winner when a winning combination is achieved. 
 4. Click the "Start A New Game" button to clear the board, player history, and start a new game.
 
 
