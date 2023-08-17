@@ -1,6 +1,7 @@
 import React from 'react';
 import Board from './Board';
 
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -57,11 +58,16 @@ class Game extends React.Component {
     const winner = this.calculateWinner(current.squares);
 
     const moves = history.map((_step, move) => {
-      const desc = move ? `Go to move #${move}` : 'Go to game start';
+      const desc = move ? `Go to move #${move}` : 'Make a move to begin game';
       return (
+        <div> 
+          <>
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button  onClick={() => this.jumpTo({move})}>{desc}</button>
+          
         </li>
+        </>
+        </div>
       );
     });
 
@@ -73,16 +79,18 @@ class Game extends React.Component {
     }
 
     return (
-      <div className="game">
+      <div className="game-container">
         <div className="game-board">
-          <Board
+          <div > 
+          <Board className="square"
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
+          </div>
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ol >{moves}</ol>
         </div>
       </div>
     );
