@@ -3,8 +3,8 @@ import "/workspaces/Tic-Tac-Toe/src/style.css";
 
 function Square(props) {
     return (
-      <button className="square" onClick={props.onClick}>
-        {props.value}
+      <button className="square">
+    
       </button>
     );
   }
